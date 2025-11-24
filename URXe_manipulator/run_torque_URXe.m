@@ -1,41 +1,57 @@
 %% Script interattivo calcolo coppie URXe
+clear all; clc;
+load torque_URXe.mat   % carica torque_f
 
 disp("=== Calcolo coppie di un Manipolatore URXe ===")
 
-% Input lunghezze
-L = input("Inserisci le lunghezze dei link [d1 a2 a3 d4 d5 d6] (es. [0.4 0.3 0.25 0.15 0.1 0.1]): ");
-
-% Input giunti (in gradi → convertiti in rad)
+%% Input
+L = [0.1625 0.425 0.3922 0.1333 0.0997 0.0996];
 theta_deg = input("Inserisci gli angoli dei giunti in gradi [t1 t2 t3 t4 t5 t6]: ");
-theta = deg2rad(theta_deg);
+theta = deg2rad(theta_deg);   % converti in radianti
+W = input("Inserisci le forze [Fx Fy Fz Mx My Mz]: ");
 
-% Input forze applicate
-W = input("Inserisci le forze e i momenti [Fx Fy Fz Mx My Mz] (es. peso 10N verso il basso → [0 -10 0 0 0 0]): ");
+%% Calcolo coppie statiche
+tau = torque_f(L, theta, W);
+disp("Coppie ai giunti = ")
+disp(tau.')
 
-% Calcolo coppie
-torque = torque_URXe(L(1), L(2), L(3), L(4), L(5), L(6), theta(1), theta(2), theta(3), theta(4), theta(5), theta(6), W(1), W(2), W(3), W(4), W(5), W(6));
+Tbase = [ 1  0  0  0;   
+          0 -1  0  0;    
+          0  0 -1  0.1625; 
+          0  0  0  1 ];
 
-% Output
-disp("Coppie necessarie ai giunti [τ1 τ2 τ3 τ4 τ5 τ6] = ");
-disp(torque.');
+d = L;
 
-Tbase=[1  0  0 0; 
-       0 -1  0 0;
-       0  0 -1 0.8;
-       0  0 0 1];
+L1 = Link('a',0,'d',d(1),'alpha',pi/2);
+L2 = Link('a',d(2),'d',0,'alpha',0);
+L3 = Link('a',d(3),'d',0,'alpha',0);
+L4 = Link('a',0,'d',d(4),'alpha',pi/2);
+L5 = Link('a',0,'d',d(5),'alpha',-pi/2);
+L6 = Link('a',0,'d',d(6),'alpha',0);
 
-d_vals = L;
-
-L1 = Link('a',0,'d',d_vals(1),'alpha',pi/2);
-L2 = Link('a',d_vals(2),'d',0,'alpha',0);
-L3 = Link('a',d_vals(3),'d',0,'alpha',0);
-L4 = Link('a',0,'d',d_vals(4),'alpha',pi/2);
-L5 = Link('a',0,'d',d_vals(5),'alpha',-pi/2);
-L6 = Link('a',0,'d',d_vals(6),'alpha',0);
-Rob1 = SerialLink([L1 L2 L3 L4 L5 L6], 'name', 'URXe');
+Rob1 = SerialLink([L1 L2 L3 L4 L5 L6], 'name','URXe');
 Rob1.base = Tbase;
+
+%% Disegno iniziale
+figure(1); clf; hold on;
+Rob1.plot(theta);
 Rob1.teach(theta);
+title("URXe - Visualizzazione coppie");
+drawnow;
 
-pause();
+%% Mostra label dei giunti nell'angolo in alto a destra
+ax = gca;
+xlims = ax.XLim;
+ylims = ax.YLim;
+zlims = ax.ZLim;
 
-Rob1.plot(theta','fps',25,'movie','es1movie.mp4');
+label_x = xlims(2);                  
+label_y = ylims(2);                  
+label_z = zlims(2);                  
+
+for i = 1:6
+    text(label_x, label_y, label_z - (i-1)*0.1, ...
+        sprintf('J%d: %.2f Nm', i, tau(i)), ...
+        'FontSize',12,'Color','r','FontWeight','bold', ...
+        'HorizontalAlignment','right');
+end
