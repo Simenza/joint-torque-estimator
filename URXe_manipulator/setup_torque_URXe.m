@@ -61,7 +61,7 @@ E = [1, 0,            -sin(pitch);
      0, cos(roll),     sin(roll)*cos(pitch);
      0, -sin(roll),    cos(roll)*cos(pitch)];
 
-Ei = simplify(inv(E));
+Ei = inv(E);
 
 Ja = simplify([eye(3), zeros(3); zeros(3), Ei]*Jg);
 
