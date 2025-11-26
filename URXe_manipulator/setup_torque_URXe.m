@@ -28,9 +28,9 @@ for i=1:n
            0           sin(alpha)              cos(alpha)              d;
            0           0                       0                       1];
 
-    T = simplify(T * Ai);  % Update the transformation matrix
-    P(:, i) = T(1:3, 4);  % Extract the position of the end-effector
-    z(:, i) = T(1:3, 3);  % Extract the z-axis direction
+    T = simplify(T * Ai);  % aggiorna la matrice di trasformazione
+    P(:, i) = T(1:3, 4);  % estrae la posizione dell'end-effector
+    z(:, i) = T(1:3, 3);  % estrae la direzione dell'asse z
 end
 
 % Calcolo dello jacobiano geometrico Jg
@@ -65,11 +65,17 @@ Ei = inv(E);
 
 Ja = simplify([eye(3), zeros(3); zeros(3), Ei]*Jg);
 
-%  Forza esterna sull'end effector
+% Forza esterna rispetto all'orientazione della terna di base
 W = [Wx; Wy; Wz; Mx; My; Mz];
 
+% Forza esterna sull'end effector
+F_ee = R.'* [Wx; Wy; Wz];
+M_ee = R.'* [Mx; My; Mz];
+
+W_ee = [F_ee; M_ee];
+
 %  Coppie ai giunti tau = Jᵀ·W
-torque = Ja.' * W;
+torque = Ja.' * W_ee;
 
 %  Creazione funzione numerica: tau_f(a,L,theta,W)
 torque_f = matlabFunction(torque, "Vars", { [d1, a2, a3, d4, d5, d6], [t1 t2 t3 t4 t5 t6], [Wx Wy Wz Mx My Mz]});
