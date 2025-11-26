@@ -30,7 +30,7 @@ Rob1 = SerialLink( ...
 Rob1.base = [1 0 0 0; 0 -1 0 0; 0 0 -1 0.1625; 0 0 0 1];
 
 Rob1.plot(theta);
-title("URXe - Coppie dinamiche in tempo reale");
+title("URXe - Coppie ai giunti in tempo reale");
 
 %% LOOP dinamico
 while true
@@ -38,7 +38,7 @@ while true
     % CHIEDI all'utente cosa vuole aggiornare
     disp(" ");
     disp("1) Cambia angoli dei giunti");
-    disp("2) Cambia payload (forze/momenti)");
+    disp("2) Cambia payload (forze e momenti)");
     disp("3) Esci");
     scelta = input("Seleziona opzione: ");
 
@@ -48,13 +48,13 @@ while true
 
     % --- Aggiornamento angoli ---
     if scelta == 1
-        theta_deg = input("Inserisci nuovi angoli [t1..t6] in gradi: ");
+        theta_deg = input("Inserisci nuovi angoli [t1 t2 t3 t4 t5 t6] in gradi: ");
         theta = deg2rad(theta_deg);
     end
 
     % --- Aggiornamento payload ---
     if scelta == 2
-        W = input("Inserisci forze [Fx Fy Fz Mx My Mz]: ");
+        W = input("Inserisci forze e momenti [Fx Fy Fz Mx My Mz]: ");
     end
 
     %% Ricalcolo coppie statiche
