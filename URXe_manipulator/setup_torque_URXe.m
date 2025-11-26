@@ -1,4 +1,4 @@
-% SETUP SYMBOLICO per manipolatore UR5e
+%% SETUP SYMBOLICO per manipolatore UR5e
 clear all; clc;
 
 disp("Generazione funzione τ(q) = Jᵀ·W ...");
@@ -7,7 +7,7 @@ disp("Generazione funzione τ(q) = Jᵀ·W ...");
 syms d1 a2 a3 d4 d5 d6 t1 t2 t3 t4 t5 t6 real
 syms Wx Wy Wz Mx My Mz real
 
-%  Cinematica diretta (posizione end-effector)
+% Cinematica diretta (posizione end-effector)
 DH = [0 pi/2 d1  t1; ...
       a2 0    0  t2; ...
       a3 0    0  t3;
@@ -33,7 +33,7 @@ for i=1:n
     z(:, i) = T(1:3, 3);  % Extract the z-axis direction
 end
 
-% Compute the Jacobian matrix J
+% Calcolo dello jacobiano geometrico Jg
 Jg = sym(zeros(6, n));
 P0 = [0;0;0];
 z0 = [0;0;1];
@@ -50,7 +50,7 @@ for i=1:n
 end
 
 
-% Jacobiano analitico
+% Calcolo dello jacobiano analitico Ja
 R = T(1:3, 1:3);
 
 yaw   = atan2(R(2,1), R(1,1));
