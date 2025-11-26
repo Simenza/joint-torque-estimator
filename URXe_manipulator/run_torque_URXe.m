@@ -4,7 +4,7 @@ load torque_URXe.mat   % carica torque_f
 
 disp("=== Modalità dinamica URXe ===");
 
-%% Costanti
+%% Lunghezze dei link
 L = [0.1625 0.425 0.3922 0.1333 0.0997 0.0996];
 
 % Configurazione iniziale
@@ -17,7 +17,7 @@ W = [0 0 0 0 0 0];   % [Fx Fy Fz Mx My Mz]
 %% Figure
 figure(1); clf; hold on;
 
-% Prima visualizzazione
+% Definizione del robot
 Rob1 = SerialLink( ...
     [ Link('a',0,'d',L(1),'alpha',pi/2), ...
       Link('a',L(2),'d',0,'alpha',0), ...
@@ -32,7 +32,7 @@ Rob1.base = [1 0 0 0; 0 -1 0 0; 0 0 -1 0.1625; 0 0 0 1];
 Rob1.plot(theta);
 title("URXe - Coppie ai giunti in tempo reale");
 
-%% LOOP dinamico
+%% LOOP per la modifica dinamica degli angoli e del payload
 while true
 
     % CHIEDI all'utente cosa vuole aggiornare
