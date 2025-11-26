@@ -1,4 +1,4 @@
-%% Script dinamico calcolo coppie URXe
+%% Script per il calcolo delle coppie ai giunti
 clear all; clc;
 load torque_URXe.mat   % carica torque_f
 
