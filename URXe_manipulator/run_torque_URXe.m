@@ -88,4 +88,4 @@ while true
 
 end
 
-disp("Modalità dinamica terminata.");
+disp("Simulazione terminata.");
