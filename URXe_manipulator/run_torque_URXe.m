@@ -1,4 +1,4 @@
-%% Script per il calcolo delle coppie ai giunti
+%% Script per il calcolo delle coppie ai giunti [UR5e]
 clear all; clc;
 load torque_URXe.mat   % carica torque_f
 
