@@ -32,6 +32,10 @@ Rob1.base = [1 0 0 0; 0 -1 0 0; 0 0 -1 0.1625; 0 0 0 1];
 Rob1.plot(theta);
 title("URXe - Coppie ai giunti in tempo reale");
 
+%% Per cancellare le frecce precedenti
+force_arrow = [];
+moment_arrow = [];
+
 %% LOOP per la modifica dinamica degli angoli e del payload
 while true
 
@@ -57,7 +61,7 @@ while true
         W = input("Inserisci forze e momenti [Fx Fy Fz Mx My Mz]: ");
     end
 
-    %% Ricalcolo coppie statiche
+    %% Calcolo coppie statiche
     tau = torque_f(L, theta, W);
     disp("Coppie aggiornate (Nm):");
     disp(tau.');
@@ -69,7 +73,7 @@ while true
     %% Cancella vecchie etichette
     delete(findall(gca, 'Type', 'text'));
 
-    %% Scrivi nuove etichette
+    %% Scrivi nuove etichette delle coppie
     ax = gca;
     xlims = ax.XLim;
     ylims = ax.YLim;
@@ -85,6 +89,46 @@ while true
              'FontSize',12,'Color','r','FontWeight','bold', ...
              'HorizontalAlignment','right');
     end
+
+    %% VISUALIZZAZIONE FORZE E MOMENTI
+    % recupera posizione end-effector
+
+    T = Rob1.fkine(theta);
+    Tmat = T.T;            % estrae la matrice 4×4
+    p = Tmat(1:3,4);       % posizione end effectorr
+
+    Fx = W(1); Fy = W(2); Fz = W(3);
+    Mx = W(4); My = W(5); Mz = W(6);
+
+    % scala per visualizzare
+    force_scale = 0.05;
+    moment_scale = 0.05;
+
+    % Cancella frecce vecchie
+    if ~isempty(force_arrow), delete(force_arrow); end
+    if ~isempty(moment_arrow), delete(moment_arrow); end
+
+    % Forza (freccia rossa)
+    force_arrow = quiver3( ...
+        p(1), p(2), p(3), ...
+        Fx*force_scale, Fy*force_scale, Fz*force_scale, ...
+        'LineWidth', 4, 'Color', 'r' );
+
+    % Momento (freccia verde)
+    moment_arrow = quiver3( ...
+        p(1), p(2), p(3), ...
+        Mx*moment_scale, My*moment_scale, Mz*moment_scale, ...
+        'LineWidth', 4, 'Color', 'g' );
+
+    hold on;
+
+    h_robot   = plot(nan, nan, 'k', 'LineWidth', 5); % Robot -> nero
+    h_force   = plot(nan, nan, 'r', 'LineWidth', 4); % Forza -> blu
+    h_moment  = plot(nan, nan, 'g', 'LineWidth', 4); % Momento -> verde
+    
+    legend([h_robot, h_force, h_moment], ...
+           {'Robot', 'Forza applicata', 'Momento applicato'}, ...
+           'Location','best');
 
 end
 
